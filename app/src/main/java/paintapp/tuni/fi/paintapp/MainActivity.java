@@ -14,7 +14,8 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 public class MainActivity extends AppCompatActivity {
 
     private MyPaint myPaint;
-    private int myColor = Color.BLACK;
+    private int bgColor = Color.BLACK;
+    private int brushColor = Color.BLACK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +48,14 @@ public class MainActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
 
         switch (item.getItemId()) {
-            case R.id.clear:
-                myPaint.clearCanvas();
+            case R.id.reset:
+                myPaint.reset();
                 return true;
             case R.id.background:
                 chooseBgColor();
+                return true;
+            case R.id.brushColor:
+                chooseBrushColor();
                 return true;
         }
 
@@ -59,14 +63,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void chooseBgColor() {
-        AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(this, myColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+        AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(this, bgColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {}
 
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
-                myColor = color;
+                bgColor = color;
                 myPaint.fillCanvas(color);
+            }
+        });
+
+        colorPicker.show();
+    }
+
+    public void chooseBrushColor() {
+        AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(this, brushColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+            @Override
+            public void onCancel(AmbilWarnaDialog dialog) {}
+
+            @Override
+            public void onOk(AmbilWarnaDialog dialog, int color) {
+                brushColor = color;
+                myPaint.changeBrushColor(color);
             }
         });
 

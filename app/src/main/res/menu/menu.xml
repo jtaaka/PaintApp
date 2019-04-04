@@ -4,12 +4,16 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/clear"
-        android:title="@string/clear"
+    <item android:id="@+id/reset"
+        android:title="@string/reset"
         app:showAsAction="never"/>
 
     <item android:id="@+id/background"
         android:title="@string/background"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/brushColor"
+        android:title="@string/brushcolor"
         app:showAsAction="never"/>
 
 </menu>
