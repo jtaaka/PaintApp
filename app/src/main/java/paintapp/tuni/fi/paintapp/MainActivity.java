@@ -1,17 +1,15 @@
 package paintapp.tuni.fi.paintapp;
 
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends MyBaseActivity {
 
     private MyPaint myPaint;
     private int bgColor = Color.BLACK;
@@ -21,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        Debug.loadDebug(this);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
         myPaint = findViewById(R.id.paint);
         myPaint.initialize(width, height);
+
+        Debug.print(TAG, "onCreate()", "Alive?",1, this);
     }
 
     @Override

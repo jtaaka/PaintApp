@@ -2,14 +2,16 @@ package paintapp.tuni.fi.paintapp;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.MaskFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
+
+import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -28,6 +30,10 @@ public class MyPaint extends View {
     private Paint myBitMapPaint = new Paint(Paint.DITHER_FLAG);
     private List<Pair<Path, Integer>> pathColorList = new ArrayList<>();
 
+    private MaskFilter blur;
+    private boolean blurBrush = false;
+    private boolean normalBrush = true;
+
     public MyPaint(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
@@ -39,6 +45,8 @@ public class MyPaint extends View {
         myPaint.setStrokeCap(Paint.Cap.ROUND);
         myPaint.setStrokeWidth(10);
 
+        blur = new BlurMaskFilter(5, BlurMaskFilter.Blur.NORMAL);
+
         pathColorList.add(Pair.create(myPath, DEFAULT_BRUSH));
     }
 
@@ -48,9 +56,23 @@ public class MyPaint extends View {
         myCanvas.drawColor(DEFAULT_BACKGROUND);
     }
 
+    public void setBlurBrush() {
+        blurBrush = true;
+        normalBrush = false;
+    }
+
+    public void setNormalBrush() {
+        normalBrush = true;
+        blurBrush = false;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         for (Pair<Path,Integer> pathColor : pathColorList) {
+            if (blurBrush) {
+                myPaint.setMaskFilter(blur);
+            }
+
             myCanvas.drawPath(pathColor.first, myPaint);
             myPaint.setColor(pathColor.second);
             myCanvas.drawBitmap(myBitMap, 0, 0, myBitMapPaint);
@@ -91,6 +113,11 @@ public class MyPaint extends View {
     public void changeBrushColor(int color) {
         pathColorList.add( Pair.create(myPath, color));
         myPath = new Path();
+    }
+
+    public void changeBrushSize(float width) {
+        myPaint.setStyle(Paint.Style.STROKE);
+        myPaint.setStrokeWidth(width);
     }
 
     public void reset() {
