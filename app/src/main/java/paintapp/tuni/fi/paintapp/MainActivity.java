@@ -2,12 +2,15 @@ package paintapp.tuni.fi.paintapp;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.DisplayMetrics;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
+
 
 public class MainActivity extends MyBaseActivity {
 
@@ -15,13 +18,17 @@ public class MainActivity extends MyBaseActivity {
     private int bgColor = Color.BLACK;
     private int brushColor = Color.BLACK;
 
+    private DrawerLayout mDrawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        Debug.loadDebug(this);
+        setSupportActionBar(findViewById(R.id.toolbar));
+
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -31,13 +38,36 @@ public class MainActivity extends MyBaseActivity {
         myPaint = findViewById(R.id.paint);
         myPaint.initialize(width, height);
 
-        Debug.print(TAG, "onCreate()", "Alive?",1, this);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        setupDrawerContent(findViewById(R.id.navigationView));
+
+        Debug.loadDebug(this);
+    }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+            menuItem -> {
+                switch (menuItem.getItemId()) {
+                    case R.id.reset:
+                        myPaint.reset();
+                        break;
+                    case R.id.background:
+                        chooseBgColor();
+                        break;
+                    case R.id.brushColor:
+                        chooseBrushColor();
+                        break;
+                }
+
+                mDrawerLayout.closeDrawers();
+
+                return true;
+            });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu, menu);
+        //getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
 
@@ -48,21 +78,12 @@ public class MainActivity extends MyBaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
-
-        switch (item.getItemId()) {
-            case R.id.reset:
-                myPaint.reset();
-                return true;
-            case R.id.background:
-                chooseBgColor();
-                return true;
-            case R.id.brushColor:
-                chooseBrushColor();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+            return true;
         }
 
-        return false;
+        return super.onOptionsItemSelected(item);
     }
 
     public void chooseBgColor() {

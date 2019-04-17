@@ -8,10 +8,9 @@ import android.graphics.Color;
 import android.graphics.MaskFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
-
-import androidx.annotation.Nullable;
-import androidx.core.util.Pair;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 

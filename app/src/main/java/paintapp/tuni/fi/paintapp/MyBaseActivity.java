@@ -1,7 +1,8 @@
 package paintapp.tuni.fi.paintapp;
 
 import android.annotation.SuppressLint;
-import androidx.appcompat.app.AppCompatActivity;
+
+import android.support.v7.app.AppCompatActivity;
 
 @SuppressLint("Registered")
 class MyBaseActivity extends AppCompatActivity {

@@ -4,4 +4,7 @@
     <string name="background">background</string>
     <string name="brushcolor">brushcolor</string>
     <string name="paint_settings">Paint settings</string>
+    <string name="drawerOpen">Open</string>
+    <string name="drawerClose">Close</string>
+    <string name="settings">Settings</string>
 </resources>
