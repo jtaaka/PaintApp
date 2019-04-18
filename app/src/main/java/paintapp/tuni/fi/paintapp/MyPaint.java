@@ -21,20 +21,25 @@ public class MyPaint extends View {
 
     public static final int DEFAULT_BRUSH = Color.BLACK;
     public static final int DEFAULT_BACKGROUND = Color.WHITE;
+    public static final float DEFAULT_STROKEWIDTH = 10;
 
     private Paint myPaint;
     private Canvas myCanvas;
     private Bitmap myBitMap;
     private Path myPath;
     private Paint myBitMapPaint = new Paint(Paint.DITHER_FLAG);
-    private List<Pair<Path, Integer>> pathColorList = new ArrayList<>();
+    private ArrayList<PaintPath> paths = new ArrayList<>();
 
     private MaskFilter blur;
     private boolean blurBrush = false;
     private boolean normalBrush = true;
+    private int brushColor;
+    private int backgroundColor;
 
     public MyPaint(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+
+        Debug.loadDebug(context);
 
         myPaint = new Paint();
         myPath = new Path();
@@ -42,11 +47,8 @@ public class MyPaint extends View {
         myPaint.setStyle(Paint.Style.STROKE);
         myPaint.setStrokeJoin(Paint.Join.ROUND);
         myPaint.setStrokeCap(Paint.Cap.ROUND);
-        myPaint.setStrokeWidth(10);
-
-        blur = new BlurMaskFilter(10, BlurMaskFilter.Blur.NORMAL);
-
-        pathColorList.add(Pair.create(myPath, DEFAULT_BRUSH));
+        myPaint.setStrokeWidth(DEFAULT_STROKEWIDTH);
+        setBrushColor(DEFAULT_BRUSH);
     }
 
     public void initialize(int width, int height) {
@@ -58,6 +60,8 @@ public class MyPaint extends View {
     public void setBlurBrush() {
         blurBrush = true;
         normalBrush = false;
+
+        blur = new BlurMaskFilter(myPaint.getStrokeWidth() / 6F, BlurMaskFilter.Blur.NORMAL);
     }
 
     public void setNormalBrush() {
@@ -65,21 +69,58 @@ public class MyPaint extends View {
         blurBrush = false;
     }
 
+    public void setBrushSize(float width) {
+        myPaint.setStrokeWidth(width);
+    }
+
+    public float getBrushSize() {
+        return myPaint.getStrokeWidth();
+    }
+
+    public void setBrushColor(int color) {
+        brushColor = color;
+    }
+
+    public int getBrushColor() {
+        return brushColor;
+    }
+
+    public void setBackgroundColor(int color) {
+        myCanvas.drawColor(color);
+        backgroundColor = color;
+        invalidate();
+    }
+
+    public int getBackgroundColor() {
+        return backgroundColor;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
-        for (Pair<Path,Integer> pathColor : pathColorList) {
-            if (blurBrush) {
-                myPaint.setMaskFilter(blur);
-            } else {
-                myPaint.setMaskFilter(null);
-            }
+        canvas.save();
+        myCanvas.drawColor(backgroundColor);
 
-            myCanvas.drawPath(pathColor.first, myPaint);
-            myPaint.setColor(pathColor.second);
-            myCanvas.drawBitmap(myBitMap, 0, 0, myBitMapPaint);
-            myCanvas.drawPath(myPath, myPaint);
-            canvas.drawBitmap(myBitMap, 0, 0, myBitMapPaint);
+        for (PaintPath path : paths) {
+            myPaint.setColor(path.brushColor);
+            myPaint.setStrokeWidth(path.brushSize);
+            myPaint.setMaskFilter(null);
+
+            if (path.blur)
+                myPaint.setMaskFilter(blur);
+
+            myCanvas.drawPath(path.path, myPaint);
         }
+
+        canvas.drawBitmap(myBitMap, 0, 0, myBitMapPaint);
+        canvas.restore();
+    }
+
+    public void drawPath(float xPos, float yPos) {
+        myPath = new Path();
+        PaintPath path = new PaintPath(getBrushSize(), getBrushColor(), getBackgroundColor(), blurBrush, myPath);
+        paths.add(path);
+        myPath.reset();
+        myPath.moveTo(xPos, yPos);
     }
 
     @Override
@@ -89,9 +130,9 @@ public class MyPaint extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                myPath.moveTo(xPos, yPos);
+                drawPath(xPos, yPos);
                 invalidate();
-                return true;
+                break;
             case MotionEvent.ACTION_MOVE:
                 myPath.lineTo(xPos, yPos);
                 invalidate();
@@ -99,32 +140,20 @@ public class MyPaint extends View {
             case MotionEvent.ACTION_UP:
                 invalidate();
                 break;
-            default:
-                return false;
         }
 
         return true;
     }
 
-    public void fillCanvas(int color) {
-        myCanvas.drawColor(color);
-        invalidate();
-    }
-
-    public void changeBrushColor(int color) {
-        pathColorList.add( Pair.create(myPath, color));
-        myPath = new Path();
-    }
-
-    public void changeBrushSize(float width) {
-        myPaint.setStrokeWidth(width);
-    }
-
     public void reset() {
         myPath.reset();
-        pathColorList.clear();
-        pathColorList.add( Pair.create(myPath, DEFAULT_BRUSH));
-        myCanvas.drawColor(DEFAULT_BACKGROUND);
+        paths.clear();
+
+        setNormalBrush();
+        setBrushColor(DEFAULT_BRUSH);
+        setBackgroundColor(DEFAULT_BACKGROUND);
+        myPaint.setStrokeWidth(DEFAULT_STROKEWIDTH);
+
         invalidate();
     }
 }

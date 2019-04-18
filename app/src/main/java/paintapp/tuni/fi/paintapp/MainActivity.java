@@ -9,16 +9,15 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.xw.repo.BubbleSeekBar;
-
 import yuku.ambilwarna.AmbilWarnaDialog;
-
 
 public class MainActivity extends MyBaseActivity {
 
     private MyPaint myPaint;
-    private int bgColor = Color.BLACK;
+    private int bgColor = Color.WHITE;
     private int brushColor = Color.BLACK;
 
     private DrawerLayout drawerLayout;
@@ -68,9 +67,11 @@ public class MainActivity extends MyBaseActivity {
                         chooseBrushSize();
                         break;
                     case R.id.bluroff:
+                        makeToastMsg("Blur brush off!");
                         myPaint.setNormalBrush();
                         break;
                     case R.id.bluron:
+                        makeToastMsg("Blur brush on!");
                         myPaint.setBlurBrush();
                         break;
                 }
@@ -81,7 +82,12 @@ public class MainActivity extends MyBaseActivity {
             });
     }
 
+    private void makeToastMsg(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
     private void chooseBrushSize() {
+        bubbleSeekBar.setProgress(myPaint.getBrushSize());
         bubbleSeekBar.setVisibility(View.VISIBLE);
 
         bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
@@ -92,7 +98,7 @@ public class MainActivity extends MyBaseActivity {
 
             @Override
             public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
-                myPaint.changeBrushSize(progressFloat);
+                myPaint.setBrushSize(progressFloat);
                 bubbleSeekBar.setVisibility(View.INVISIBLE);
             }
 
@@ -125,6 +131,8 @@ public class MainActivity extends MyBaseActivity {
     }
 
     public void chooseBgColor() {
+        bgColor = myPaint.getBackgroundColor();
+
         AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(this, bgColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {}
@@ -132,7 +140,7 @@ public class MainActivity extends MyBaseActivity {
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
                 bgColor = color;
-                myPaint.fillCanvas(color);
+                myPaint.setBackgroundColor(color);
             }
         });
 
@@ -140,6 +148,8 @@ public class MainActivity extends MyBaseActivity {
     }
 
     public void chooseBrushColor() {
+        brushColor = myPaint.getBrushColor();
+
         AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(this, brushColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {}
@@ -147,7 +157,7 @@ public class MainActivity extends MyBaseActivity {
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
                 brushColor = color;
-                myPaint.changeBrushColor(color);
+                myPaint.setBrushColor(color);
             }
         });
 
