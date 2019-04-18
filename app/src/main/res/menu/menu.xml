@@ -4,13 +4,28 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <item android:id="@+id/reset"
-            android:title="@string/reset" />
+    <item android:id="@+id/reset"
+        android:title="@string/reset"
+        android:icon="@drawable/ic_clearall"/>
 
-        <item android:id="@+id/background"
-            android:title="@string/background" />
+    <item android:id="@+id/background"
+        android:title="@string/background"
+        android:icon="@drawable/ic_background"/>
 
-        <item android:id="@+id/brushColor"
-            android:title="@string/brushcolor"/>
+    <item android:id="@+id/brushColor"
+        android:title="@string/brushcolor"
+        android:icon="@drawable/ic_brush"/>
+
+    <item android:id="@+id/brushSize"
+        android:title="@string/brushsize"
+        android:icon="@drawable/ic_brushsize"/>
+
+    <item android:id="@+id/bluron"
+        android:title="@string/bluron"
+        android:icon="@drawable/ic_bluron"/>
+
+    <item android:id="@+id/bluroff"
+        android:title="@string/bluroff"
+        android:icon="@drawable/ic_bluroff"/>
 
 </menu>

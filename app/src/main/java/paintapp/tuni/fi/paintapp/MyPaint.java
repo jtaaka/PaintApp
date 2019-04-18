@@ -44,7 +44,7 @@ public class MyPaint extends View {
         myPaint.setStrokeCap(Paint.Cap.ROUND);
         myPaint.setStrokeWidth(10);
 
-        blur = new BlurMaskFilter(5, BlurMaskFilter.Blur.NORMAL);
+        blur = new BlurMaskFilter(10, BlurMaskFilter.Blur.NORMAL);
 
         pathColorList.add(Pair.create(myPath, DEFAULT_BRUSH));
     }
@@ -70,6 +70,8 @@ public class MyPaint extends View {
         for (Pair<Path,Integer> pathColor : pathColorList) {
             if (blurBrush) {
                 myPaint.setMaskFilter(blur);
+            } else {
+                myPaint.setMaskFilter(null);
             }
 
             myCanvas.drawPath(pathColor.first, myPaint);
@@ -115,7 +117,6 @@ public class MyPaint extends View {
     }
 
     public void changeBrushSize(float width) {
-        myPaint.setStyle(Paint.Style.STROKE);
         myPaint.setStrokeWidth(width);
     }
 

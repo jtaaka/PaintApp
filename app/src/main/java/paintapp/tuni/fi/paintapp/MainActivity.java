@@ -8,6 +8,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.xw.repo.BubbleSeekBar;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -18,12 +21,16 @@ public class MainActivity extends MyBaseActivity {
     private int bgColor = Color.BLACK;
     private int brushColor = Color.BLACK;
 
-    private DrawerLayout mDrawerLayout;
+    private DrawerLayout drawerLayout;
+    private BubbleSeekBar bubbleSeekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        bubbleSeekBar = findViewById(R.id.slider);
+        bubbleSeekBar.setVisibility(View.INVISIBLE);
 
         setSupportActionBar(findViewById(R.id.toolbar));
 
@@ -38,7 +45,7 @@ public class MainActivity extends MyBaseActivity {
         myPaint = findViewById(R.id.paint);
         myPaint.initialize(width, height);
 
-        mDrawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
         setupDrawerContent(findViewById(R.id.navigationView));
 
         Debug.loadDebug(this);
@@ -57,12 +64,43 @@ public class MainActivity extends MyBaseActivity {
                     case R.id.brushColor:
                         chooseBrushColor();
                         break;
+                    case R.id.brushSize:
+                        chooseBrushSize();
+                        break;
+                    case R.id.bluroff:
+                        myPaint.setNormalBrush();
+                        break;
+                    case R.id.bluron:
+                        myPaint.setBlurBrush();
+                        break;
                 }
 
-                mDrawerLayout.closeDrawers();
+                drawerLayout.closeDrawers();
 
                 return true;
             });
+    }
+
+    private void chooseBrushSize() {
+        bubbleSeekBar.setVisibility(View.VISIBLE);
+
+        bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
+            @Override
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+
+            }
+
+            @Override
+            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
+                myPaint.changeBrushSize(progressFloat);
+                bubbleSeekBar.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+
+            }
+        });
     }
 
     @Override
@@ -79,7 +117,7 @@ public class MainActivity extends MyBaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            mDrawerLayout.openDrawer(GravityCompat.START);
+            drawerLayout.openDrawer(GravityCompat.START);
             return true;
         }
 
