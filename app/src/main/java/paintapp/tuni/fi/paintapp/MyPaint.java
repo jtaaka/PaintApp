@@ -164,4 +164,8 @@ public class MyPaint extends View {
             invalidate();
         }
     }
+
+    public Bitmap getImage() {
+        return myBitMap;
+    }
 }

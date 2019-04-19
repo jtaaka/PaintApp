@@ -11,4 +11,5 @@
     <string name="bluron">Blur Brush On</string>
     <string name="bluroff">Blur Brush Off</string>
     <string name="undo">Undo</string>
+    <string name="save_to_gallery">Save To Gallery</string>
 </resources>
