@@ -67,12 +67,15 @@ public class MainActivity extends MyBaseActivity {
                         chooseBrushSize();
                         break;
                     case R.id.bluroff:
-                        makeToastMsg("Blur brush off!");
+                        makeToastMsg("Blur brush off");
                         myPaint.setNormalBrush();
                         break;
                     case R.id.bluron:
-                        makeToastMsg("Blur brush on!");
+                        makeToastMsg("Blur brush on");
                         myPaint.setBlurBrush();
+                        break;
+                    case R.id.undo:
+                        myPaint.undoLastPath();
                         break;
                 }
 

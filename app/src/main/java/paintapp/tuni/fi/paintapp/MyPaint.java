@@ -10,17 +10,15 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MyPaint extends View {
 
-    public static final int DEFAULT_BRUSH = Color.BLACK;
-    public static final int DEFAULT_BACKGROUND = Color.WHITE;
+    public static final int DEFAULT_BRUSH_COLOR = Color.BLACK;
+    public static final int DEFAULT_BACKGROUND_COLOR = Color.WHITE;
     public static final float DEFAULT_STROKEWIDTH = 10;
 
     private Paint myPaint;
@@ -34,6 +32,7 @@ public class MyPaint extends View {
     private boolean blurBrush = false;
     private boolean normalBrush = true;
     private int brushColor;
+    private float brushSize;
     private int backgroundColor;
 
     public MyPaint(Context context, @Nullable AttributeSet attrs) {
@@ -47,14 +46,15 @@ public class MyPaint extends View {
         myPaint.setStyle(Paint.Style.STROKE);
         myPaint.setStrokeJoin(Paint.Join.ROUND);
         myPaint.setStrokeCap(Paint.Cap.ROUND);
-        myPaint.setStrokeWidth(DEFAULT_STROKEWIDTH);
-        setBrushColor(DEFAULT_BRUSH);
+        //reset();
     }
 
     public void initialize(int width, int height) {
         myBitMap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         myCanvas = new Canvas(myBitMap);
-        myCanvas.drawColor(DEFAULT_BACKGROUND);
+        setBrushColor(DEFAULT_BRUSH_COLOR);
+        setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+        setBrushSize(DEFAULT_STROKEWIDTH);
     }
 
     public void setBlurBrush() {
@@ -70,11 +70,12 @@ public class MyPaint extends View {
     }
 
     public void setBrushSize(float width) {
+        brushSize = width;
         myPaint.setStrokeWidth(width);
     }
 
     public float getBrushSize() {
-        return myPaint.getStrokeWidth();
+        return brushSize;
     }
 
     public void setBrushColor(int color) {
@@ -150,10 +151,18 @@ public class MyPaint extends View {
         paths.clear();
 
         setNormalBrush();
-        setBrushColor(DEFAULT_BRUSH);
-        setBackgroundColor(DEFAULT_BACKGROUND);
-        myPaint.setStrokeWidth(DEFAULT_STROKEWIDTH);
+        setBrushColor(DEFAULT_BRUSH_COLOR);
+        setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+        setBrushSize(DEFAULT_STROKEWIDTH);
 
         invalidate();
+    }
+
+    public void undoLastPath() {
+        if (!paths.isEmpty()) {
+            backgroundColor = getBackgroundColor();
+            paths.remove(paths.get(paths.size() - 1));
+            invalidate();
+        }
     }
 }
