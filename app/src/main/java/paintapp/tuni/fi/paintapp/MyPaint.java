@@ -46,7 +46,6 @@ public class MyPaint extends View {
         myPaint.setStyle(Paint.Style.STROKE);
         myPaint.setStrokeJoin(Paint.Join.ROUND);
         myPaint.setStrokeCap(Paint.Cap.ROUND);
-        //reset();
     }
 
     public void initialize(int width, int height) {

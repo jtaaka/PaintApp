@@ -54,9 +54,6 @@ public class MainActivity extends MyBaseActivity {
         navigationView.setNavigationItemSelectedListener(
             menuItem -> {
                 switch (menuItem.getItemId()) {
-                    case R.id.reset:
-                        myPaint.reset();
-                        break;
                     case R.id.background:
                         chooseBgColor();
                         break;
@@ -73,9 +70,6 @@ public class MainActivity extends MyBaseActivity {
                     case R.id.bluron:
                         makeToastMsg("Blur brush on");
                         myPaint.setBlurBrush();
-                        break;
-                    case R.id.undo:
-                        myPaint.undoLastPath();
                         break;
                 }
 
@@ -95,9 +89,7 @@ public class MainActivity extends MyBaseActivity {
 
         bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
-            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
-
-            }
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {}
 
             @Override
             public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
@@ -106,15 +98,13 @@ public class MainActivity extends MyBaseActivity {
             }
 
             @Override
-            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
-
-            }
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {}
         });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -125,9 +115,16 @@ public class MainActivity extends MyBaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            drawerLayout.openDrawer(GravityCompat.START);
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                break;
+            case R.id.reset:
+                myPaint.reset();
+                break;
+            case R.id.undo:
+                myPaint.undoLastPath();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
