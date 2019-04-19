@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.design.card.MaterialCardView;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ public class MainActivity extends MyBaseActivity {
 
     private DrawerLayout drawerLayout;
     private BubbleSeekBar bubbleSeekBar;
+    private MaterialCardView cardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,9 @@ public class MainActivity extends MyBaseActivity {
 
         bubbleSeekBar = findViewById(R.id.slider);
         bubbleSeekBar.setVisibility(View.INVISIBLE);
+
+        cardView = findViewById(R.id.cardView);
+        cardView.setVisibility(View.INVISIBLE);
 
         setSupportActionBar(findViewById(R.id.toolbar));
 
@@ -86,6 +91,7 @@ public class MainActivity extends MyBaseActivity {
     private void chooseBrushSize() {
         bubbleSeekBar.setProgress(myPaint.getBrushSize());
         bubbleSeekBar.setVisibility(View.VISIBLE);
+        cardView.setVisibility(View.VISIBLE);
 
         bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
@@ -95,6 +101,7 @@ public class MainActivity extends MyBaseActivity {
             public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
                 myPaint.setBrushSize(progressFloat);
                 bubbleSeekBar.setVisibility(View.INVISIBLE);
+                cardView.setVisibility(View.INVISIBLE);
             }
 
             @Override
