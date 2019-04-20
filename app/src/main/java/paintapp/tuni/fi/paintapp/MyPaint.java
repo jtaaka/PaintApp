@@ -165,6 +165,14 @@ public class MyPaint extends View {
         }
     }
 
+    public void setImage(Bitmap image) {
+        // tällä näkyy -> myBitMap = image.copy(Bitmap.Config.ARGB_8888, true);
+
+        paths.clear();
+        myPath.reset();
+        invalidate();
+    }
+
     public Bitmap getImage() {
         return myBitMap;
     }

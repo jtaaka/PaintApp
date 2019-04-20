@@ -23,6 +23,10 @@
         android:title="@string/bluroff"
         android:icon="@drawable/ic_bluroff"/>
 
+    <item android:id="@+id/gallery"
+        android:title="@string/get_from_gallery"
+        android:icon="@drawable/ic_gallery"/>
+
     <item android:id="@+id/save"
         android:title="@string/save_to_gallery"
         android:icon="@drawable/ic_save"/>

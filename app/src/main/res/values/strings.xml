@@ -12,4 +12,5 @@
     <string name="bluroff">Blur Brush Off</string>
     <string name="undo">Undo</string>
     <string name="save_to_gallery">Save To Gallery</string>
+    <string name="get_from_gallery">Get From Gallery</string>
 </resources>
