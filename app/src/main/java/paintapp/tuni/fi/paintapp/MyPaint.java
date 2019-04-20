@@ -35,6 +35,7 @@ public class MyPaint extends View {
     private float brushSize;
     private int backgroundColor;
 
+
     public MyPaint(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
@@ -97,8 +98,14 @@ public class MyPaint extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.save();
+
+        //canvas.drawBitmap(myBitMap, 0, 0, myBitMapPaint);
+
         myCanvas.drawColor(backgroundColor);
+        myCanvas.drawBitmap(myBitMap, 0, 0, myBitMapPaint);
+
+        canvas.drawColor(backgroundColor);
+        canvas.drawBitmap(myBitMap, 0, 0, myBitMapPaint);
 
         for (PaintPath path : paths) {
             myPaint.setColor(path.brushColor);
@@ -109,10 +116,8 @@ public class MyPaint extends View {
                 myPaint.setMaskFilter(blur);
 
             myCanvas.drawPath(path.path, myPaint);
+            canvas.drawPath(path.path, myPaint);
         }
-
-        canvas.drawBitmap(myBitMap, 0, 0, myBitMapPaint);
-        canvas.restore();
     }
 
     public void drawPath(float xPos, float yPos) {
@@ -148,6 +153,7 @@ public class MyPaint extends View {
     public void reset() {
         myPath.reset();
         paths.clear();
+        myBitMap = Bitmap.createBitmap(myBitMap.getWidth(),myBitMap.getHeight(), Bitmap.Config.ARGB_8888);
 
         setNormalBrush();
         setBrushColor(DEFAULT_BRUSH_COLOR);
@@ -159,18 +165,19 @@ public class MyPaint extends View {
 
     public void undoLastPath() {
         if (!paths.isEmpty()) {
-            backgroundColor = getBackgroundColor();
             paths.remove(paths.get(paths.size() - 1));
             invalidate();
         }
     }
 
     public void setImage(Bitmap image) {
-        // tällä näkyy -> myBitMap = image.copy(Bitmap.Config.ARGB_8888, true);
+        myBitMap = Bitmap.createBitmap(image.copy(Bitmap.Config.ARGB_8888, true));
+
+        //myCanvas.setBitmap(myBitMap);
 
         paths.clear();
         myPath.reset();
-        invalidate();
+        //invalidate();
     }
 
     public Bitmap getImage() {

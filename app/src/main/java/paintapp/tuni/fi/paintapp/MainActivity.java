@@ -11,19 +11,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.card.MaterialCardView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.design.card.MaterialCardView;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.xw.repo.BubbleSeekBar;
+
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class MainActivity extends MyBaseActivity {
@@ -247,7 +247,7 @@ public class MainActivity extends MyBaseActivity {
 
             Bitmap image = BitmapFactory.decodeFile(picturePath);
 
-            myPaint.setImage(image.copy(Bitmap.Config.ARGB_8888, true));
+            myPaint.setImage(image);
         }
     }
 }
