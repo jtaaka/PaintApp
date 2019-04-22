@@ -1,13 +1,8 @@
 package paintapp.tuni.fi.paintapp;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -26,19 +21,49 @@ import com.xw.repo.BubbleSeekBar;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
+/**
+ * Main activity class.
+ *
+ * @author  Juho Taakala (juho.taakala@tuni.fi)
+ * @version 20190422
+ * @since   1.8
+ */
 public class MainActivity extends MyBaseActivity {
 
+    /**
+     * Defines MyPaint class.
+     */
     private MyPaint myPaint;
+
+    /**
+     * Default background color for color picker.
+     */
     private int bgColor = Color.WHITE;
+
+    /**
+     * Default brush color for color picker.
+     */
     private int brushColor = Color.BLACK;
+
+    /**
+     * Defines if user gives acces to storage or not.
+     */
     private boolean accessToStorage;
 
+    /**
+     * Defines drawer layout for menu items.
+     */
     private DrawerLayout drawerLayout;
-    private BubbleSeekBar brushSizeSlider;
-    private MaterialCardView cardView;
 
-    private int width;
-    private int height;
+    /**
+     * Defines a slider for brush size change.
+     */
+    private BubbleSeekBar brushSizeSlider;
+
+    /**
+     * Defines a card view used with brush size slider.
+     */
+    private MaterialCardView cardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,16 +86,12 @@ public class MainActivity extends MyBaseActivity {
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        width = metrics.widthPixels;
-        height = metrics.heightPixels;
 
         myPaint = findViewById(R.id.paint);
-        myPaint.initialize(width, height);
+        myPaint.initialize(metrics.widthPixels, metrics.heightPixels);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         setupDrawerContent(findViewById(R.id.navigationView));
-
-        Debug.loadDebug(this);
     }
 
     @Override
@@ -86,7 +107,12 @@ public class MainActivity extends MyBaseActivity {
         }
     }
 
-    private void setupDrawerContent(NavigationView navigationView) {
+    /**
+     * Sets up a listener to listen to menu item clicks and does actions based on clicked item.
+     *
+     * @param navigationView Navigation view for menu items.
+     */
+    private void setupDrawerContent(@NonNull NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
             menuItem -> {
                 switch (menuItem.getItemId()) {
@@ -107,9 +133,9 @@ public class MainActivity extends MyBaseActivity {
                         makeToastMsg("Blur brush on", Toast.LENGTH_SHORT);
                         myPaint.setBlurBrush();
                         break;
-                    case R.id.gallery:
+                    /*case R.id.gallery:
                         getImageFromGallery();
-                        break;
+                        break;*/
                     case R.id.save:
                         saveToGallery();
                         break;
@@ -121,10 +147,19 @@ public class MainActivity extends MyBaseActivity {
             });
     }
 
+    /**
+     * Makes a Toast message.
+     *
+     * @param message Message to display on screen.
+     * @param duration Duration that the message is shown on screen.
+     */
     private void makeToastMsg(String message, int duration) {
         Toast.makeText(this, message, duration).show();
     }
 
+    /**
+     * Opens up a slider on card view to set the brush size.
+     */
     private void chooseBrushSize() {
         brushSizeSlider.setProgress(myPaint.getBrushSize());
         brushSizeSlider.setVisibility(View.VISIBLE);
@@ -174,6 +209,9 @@ public class MainActivity extends MyBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Opens up a color picker dialog for setting the background color for canvas.
+     */
     public void chooseBgColor() {
         bgColor = myPaint.getBackgroundColor();
 
@@ -191,6 +229,9 @@ public class MainActivity extends MyBaseActivity {
         colorPicker.show();
     }
 
+    /**
+     * Opens up a color picker dialog for setting the brush color.
+     */
     public void chooseBrushColor() {
         brushColor = myPaint.getBrushColor();
 
@@ -208,6 +249,9 @@ public class MainActivity extends MyBaseActivity {
         colorPicker.show();
     }
 
+    /**
+     * Saves the currently drawn canvas to user's gallery.
+     */
     public void saveToGallery() {
         if (accessToStorage) {
             MediaStore.Images.Media.insertImage(getApplicationContext().getContentResolver(),
@@ -219,6 +263,7 @@ public class MainActivity extends MyBaseActivity {
         }
     }
 
+    /*
     public void getImageFromGallery() {
         if (accessToStorage) {
             Intent i = new Intent(
@@ -251,5 +296,5 @@ public class MainActivity extends MyBaseActivity {
 
             myPaint.setImage(image);
         }
-    }
+    }*/
 }
