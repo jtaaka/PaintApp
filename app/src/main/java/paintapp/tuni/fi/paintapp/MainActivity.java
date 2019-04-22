@@ -215,7 +215,7 @@ public class MainActivity extends MyBaseActivity {
 
             makeToastMsg("Canvas saved to gallery", Toast.LENGTH_SHORT);
         } else {
-            makeToastMsg("You have denied access to gallery", Toast.LENGTH_SHORT);
+            makeToastMsg("You have denied access to gallery", Toast.LENGTH_LONG);
         }
     }
 
@@ -226,6 +226,8 @@ public class MainActivity extends MyBaseActivity {
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
             startActivityForResult(i, 1);
+        } else {
+            makeToastMsg("You have denied access to gallery", Toast.LENGTH_LONG);
         }
     }
 
