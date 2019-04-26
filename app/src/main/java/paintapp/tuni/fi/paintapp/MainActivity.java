@@ -1,8 +1,15 @@
 package paintapp.tuni.fi.paintapp;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -65,6 +72,10 @@ public class MainActivity extends MyBaseActivity {
      */
     private MaterialCardView cardView;
 
+    private int width;
+
+    private int height;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,8 +98,11 @@ public class MainActivity extends MyBaseActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
+        width = metrics.widthPixels;
+        height = metrics.heightPixels;
+
         myPaint = findViewById(R.id.paint);
-        myPaint.initialize(metrics.widthPixels, metrics.heightPixels);
+        myPaint.initialize(width, height);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         setupDrawerContent(findViewById(R.id.navigationView));
@@ -133,9 +147,9 @@ public class MainActivity extends MyBaseActivity {
                         makeToastMsg("Blur brush on", Toast.LENGTH_SHORT);
                         myPaint.setBlurBrush();
                         break;
-                    /*case R.id.gallery:
+                    case R.id.gallery:
                         getImageFromGallery();
-                        break;*/
+                        break;
                     case R.id.save:
                         saveToGallery();
                         break;
@@ -263,7 +277,10 @@ public class MainActivity extends MyBaseActivity {
         }
     }
 
-    /*
+
+    /**
+     * Gets image from user's gallery.
+     */
     public void getImageFromGallery() {
         if (accessToStorage) {
             Intent i = new Intent(
@@ -293,8 +310,42 @@ public class MainActivity extends MyBaseActivity {
             cursor.close();
 
             Bitmap image = BitmapFactory.decodeFile(picturePath);
-
-            myPaint.setImage(image);
+            rotateGalleryImage(image, picturePath);
         }
-    }*/
+    }
+
+    /**
+     * Rotates user's gallery image vertically.
+     *
+     * @param image Image selected from gallery.
+     * @param picturePath Path of the file.
+     */
+    public void rotateGalleryImage(Bitmap image, String picturePath) {
+        try {
+            ExifInterface exif = new ExifInterface(picturePath);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            Matrix matrix = new Matrix();
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    matrix.postRotate(90);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    matrix.postRotate(180);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    matrix.postRotate(270);
+                    break;
+            }
+
+            Bitmap bitMap = Bitmap.createBitmap(image, 0, 0, image.getWidth(), image.getHeight(), matrix, true);
+
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitMap, width, height, true);
+
+            myPaint.setImage(scaledBitmap);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

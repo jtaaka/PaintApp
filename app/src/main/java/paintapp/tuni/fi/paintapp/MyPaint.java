@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -77,12 +78,12 @@ public class MyPaint extends View {
     /**
      * Defines if blur brush is used or not.
      */
-    private boolean blurBrush = false;
+    private boolean blurBrush;
 
     /**
      * Defines is normal brush is used or not.
      */
-    private boolean normalBrush = true;
+    private boolean normalBrush;
 
     /**
      * Defines the brush color.
@@ -98,6 +99,11 @@ public class MyPaint extends View {
      * Defines the background color.
      */
     private int backgroundColor;
+
+    /**
+     * Defines if gallery image is used.
+     */
+    private boolean galleryImage = false;
 
     /**
      * Constructs MyPaint class and creates new Paint and Path objects.
@@ -129,6 +135,8 @@ public class MyPaint extends View {
         setBrushColor(DEFAULT_BRUSH_COLOR);
         setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
         setBrushSize(DEFAULT_STROKEWIDTH);
+        setNormalBrush();
+        blur = new BlurMaskFilter(myPaint.getStrokeWidth() / 6F, BlurMaskFilter.Blur.NORMAL);
     }
 
     /**
@@ -137,8 +145,15 @@ public class MyPaint extends View {
     public void setBlurBrush() {
         blurBrush = true;
         normalBrush = false;
+    }
 
-        blur = new BlurMaskFilter(myPaint.getStrokeWidth() / 6F, BlurMaskFilter.Blur.NORMAL);
+    /**
+     * Gets blur mask filter.
+     *
+     * @return Returns blurred brush with radius depending on current brush size.
+     */
+    public BlurMaskFilter getBlur() {
+        return new BlurMaskFilter(myPaint.getStrokeWidth() / 6F, BlurMaskFilter.Blur.NORMAL);
     }
 
     /**
@@ -209,17 +224,15 @@ public class MyPaint extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawBitmap(myBitMap, 0, 0, myBitMapPaint);
-        myCanvas.drawColor(getBackgroundColor());
 
         for (PaintPath path : paths) {
             myPaint.setColor(path.brushColor);
             myPaint.setStrokeWidth(path.brushSize);
             myPaint.setMaskFilter(null);
 
-            if (path.blur) myPaint.setMaskFilter(blur);
+            if (path.blur) myPaint.setMaskFilter(getBlur());
 
             myCanvas.drawPath(path.path, myPaint);
-            canvas.drawPath(path.path, myPaint);
         }
     }
 
@@ -231,8 +244,7 @@ public class MyPaint extends View {
      */
     public void drawPath(float xPos, float yPos) {
         myPath = new Path();
-        PaintPath path = new PaintPath(getBrushSize(), getBrushColor(), getBackgroundColor(), blurBrush, myPath);
-        paths.add(path);
+        paths.add(new PaintPath(getBrushSize(), getBrushColor(), getBackgroundColor(), blurBrush, myPath));
         myPath.reset();
         myPath.moveTo(xPos, yPos);
     }
@@ -245,15 +257,15 @@ public class MyPaint extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 drawPath(xPos, yPos);
-                invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
                 myPath.lineTo(xPos, yPos);
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                invalidate();
                 break;
+            default:
+                return false;
         }
 
         return true;
@@ -265,6 +277,7 @@ public class MyPaint extends View {
     public void reset() {
         myPath.reset();
         paths.clear();
+        galleryImage = false;
 
         myBitMap = Bitmap.createBitmap(myBitMap.getWidth(), myBitMap.getHeight(), Bitmap.Config.ARGB_8888);
         myCanvas = new Canvas(myBitMap);
@@ -281,10 +294,14 @@ public class MyPaint extends View {
      * Clears last drawn path.
      */
     public void undoLastPath() {
-        if (!paths.isEmpty()) {
+        if (!paths.isEmpty() && !galleryImage) {
             paths.remove(paths.get(paths.size() - 1));
+            myCanvas.drawColor(getBackgroundColor());
             invalidate();
         }
+
+        if (galleryImage)
+            Toast.makeText(getContext(),"Undo disabled with gallery image", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -298,6 +315,7 @@ public class MyPaint extends View {
 
         myBitMap = image.copy(Bitmap.Config.ARGB_8888, true);
         myCanvas = new Canvas(myBitMap);
+        galleryImage = true;
         invalidate();
     }
 
